@@ -28,6 +28,12 @@ async function run() {
     const database=client.db("toruismSpotsDB");
     const spotCollection=database.collection("spots");
 
+    app.get("/spots", async(req,res)=>{
+      const cursor=spotCollection.find();
+      const result=await cursor.toArray();
+      res.send(result);
+    })
+
     app.post("/spots", async(req,res)=>{
       const spotsData=req.body;
       const result=await spotCollection.insertOne(spotsData);
