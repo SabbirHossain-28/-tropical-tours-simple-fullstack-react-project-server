@@ -39,12 +39,29 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/spoots", async (req, res) => {
+      try {
+        const country_name = req.query.country_name;
+        console.log(country_name);
+        const query = { country_name:country_name};
+        const cursor = spotCollection.find(query);
+        const result = await cursor.toArray(); 
+        res.send(result);
+      } catch (error) {
+        console.error("Error fetching spots by country name:", error);
+        res.status(500).send("Internal Server Error");
+      }
+    });
+    
+
     app.get("/spots/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await spotCollection.findOne(query);
       res.send(result);
     });
+
+    
 
     app.post("/spots", async (req, res) => {
       const spotsData = req.body;
@@ -56,7 +73,7 @@ async function run() {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
-      const newSpotData=req.body;
+      const newSpotData = req.body;
       const updatedSpotData = {
         $set: {
           photo: newSpotData.photo,
@@ -70,7 +87,11 @@ async function run() {
           country_name: newSpotData.country_name,
         },
       };
-      const result=await spotCollection.updateOne(filter,updatedSpotData,options);
+      const result = await spotCollection.updateOne(
+        filter,
+        updatedSpotData,
+        options
+      );
       res.send(result);
     });
 
