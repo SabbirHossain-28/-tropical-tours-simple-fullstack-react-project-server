@@ -26,9 +26,15 @@ async function run() {
 
     const database = client.db("toruismSpotsDB");
     const spotCollection = database.collection("spots");
+    const countriesCollection = database.collection("countries");
 
     app.get("/spots", async (req, res) => {
       const cursor = spotCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    app.get("/countries", async (req, res) => {
+      const cursor = countriesCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
